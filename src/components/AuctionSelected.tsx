@@ -10,9 +10,14 @@ import {
   TypographySystem,
 } from "@mui/joy";
 
-import Clock from "./Clock.tsx";
+import Clock from "./Clock";
 import { formatDistanceToNow } from "date-fns";
-const AuctionSelected = ({ itemId }) => {
+
+interface AuctionSelectedType {
+  itemId: string
+};
+
+const AuctionSelected = ({ itemId }: AuctionSelectedType) => {
   const [bid, setBid] = useState<number | string>("");
   const [intervalKey, setIntervalKey] = useState(0);
   const [maxBids, setMaxBids] = useState<{

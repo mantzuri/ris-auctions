@@ -2,7 +2,7 @@ import React from 'react';
 
 import { intervalToDuration } from "date-fns";
 import { Sheet } from "@mui/joy";
-import TimeBlock from "./TimeBlock.tsx";
+import TimeBlock from "./TimeBlock";
 import { useEffect, useState } from "react";
 
 const Clock = () => {

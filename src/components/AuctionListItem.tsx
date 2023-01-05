@@ -1,7 +1,12 @@
 import React from "react";
 import { Sheet, AspectRatio, ListItem, ListItemButton } from "@mui/joy";
 
-const AuctionListItem = ({ itemId, image, onClick }) => {
+interface AuctionListItemType {
+  itemId: string;
+  image: any;
+  onClick: any;
+}
+const AuctionListItem = ({ itemId, image, onClick }: AuctionListItemType) => {
   return (
     <ListItem key={itemId}>
       <ListItemButton onClick={() => onClick(itemId)}>
