@@ -1,40 +1,54 @@
-import React from "react";
-import { useState, useEffect } from "react";
 import {
+  AspectRatio,
   Box,
   Button,
   Sheet,
-  AspectRatio,
-  Typography,
   TextField,
+  Typography,
   TypographySystem,
 } from "@mui/joy";
+import { AuctionItemType, SelectedAuctionItemType } from "../types";
+import { DocumentData, QuerySnapshot } from "@firebase/firestore";
+import { auth, bidOnItem, streamAuctionBids } from "../firebase";
+import { useEffect, useState } from "react";
 
+import Alert from "./Alert";
 import Clock from "./Clock";
 import { formatDistanceToNow } from "date-fns";
 
-interface AuctionSelectedType {
-  itemId: string
-};
+const REFRESH_INTERVAL = 60000;
 
-const AuctionSelected = ({ itemId }: AuctionSelectedType) => {
-  const [bid, setBid] = useState<number | string>("");
+const AuctionSelected = ({ image, title, subtitle, itemId }: SelectedAuctionItemType) => {
+  const [bidAmount, setBidAmount] = useState<number | string>("");
   const [intervalKey, setIntervalKey] = useState(0);
-  const [maxBids, setMaxBids] = useState<{
-    value: number | string;
-    ts?: string;
-  }[]>([]);
+  const [bids, setBids] = useState<AuctionItemType[]>([]);
+  const [bannerState, setBannerState] = useState(false);
 
-  const onBidClick = () => {
-    if (!maxBids[0] || bid > maxBids[0].value) {
-      setMaxBids(
-        [{ value: bid, ts: new Date().toISOString() }, ...maxBids.slice(0, 3)]
-      );
-    }
+  useEffect(() =>
+    streamAuctionBids(
+      itemId || "",
+      "demo-bids",
+      (querySnapshot: QuerySnapshot) => {
+        const updatedBids = querySnapshot.docs.map((doc) =>
+          doc.data()
+        );
+        setBids(updatedBids as AuctionItemType[]);
+
+      },
+      (err: QuerySnapshot<DocumentData>) => {
+        console.error(err);
+        throw new Error("Failed to listen to bids");
+      }
+    )
+    , [itemId]);
+
+  const onBidClick = async () => {
+    setBidAmount('');
+    await bidOnItem({ itemId, bidAmount });
   };
 
   useEffect(() => {
-    let interval = setInterval(() => setIntervalKey(intervalKey + 1), 30 * 1000);
+    let interval = setInterval(() => setIntervalKey(intervalKey + 1), REFRESH_INTERVAL);
     return () => clearInterval(interval);
   }, [intervalKey])
 
@@ -42,14 +56,14 @@ const AuctionSelected = ({ itemId }: AuctionSelectedType) => {
     <Box sx={{ width: "100vw" }}>
       <Box sx={{ width: 520, mx: "auto" }}>
         <Typography level="h2" fontSize="md" sx={{ mb: 0.5 }}>
-          Yosemite National Park
+          {title}
         </Typography>
-        <Typography level="body2">April 24 to May 02, 2021</Typography>
+        <Typography level="body2">{subtitle}</Typography>
         <Sheet sx={styles.imageContainer}>
           <AspectRatio>
             <img
               style={{ borderRadius: "md" }}
-              src={`https://source.unsplash.com/random?sig=${itemId}`}
+              src={image}
               alt="background"
             />
           </AspectRatio>
@@ -59,30 +73,33 @@ const AuctionSelected = ({ itemId }: AuctionSelectedType) => {
           <TextField
             startDecorator={"$"}
             type="number"
-            value={bid}
+            value={bidAmount}
             onChange={(value) => {
-              setBid(Number(value.target.value) || "");
+              setBidAmount(Number(value.target.value) || "");
             }}
           />
           <Button
             sx={{ ml: 4 }}
             onClick={onBidClick}
-            disabled={Boolean(!bid || (maxBids[0] && bid < maxBids[0].value))}
+            disabled={Boolean(!bidAmount || (bids[0] && bidAmount <= bids[0].bidAmount))}
           >
             Bid
           </Button>
         </Sheet>
         <Sheet sx={styles.passBids}>
           <>
-            {maxBids[0] &&
-              maxBids.map((bid, index) => (
+            {bids[0] &&
+              bids[0].bidderId === auth.currentUser?.uid &&
+              <Alert title="Congratulation" subtitle="You are the highest bidder" />
+            }
+            {bids[0] &&
+              bids.map((bid, index) => (
                 <Typography
                   key={index + intervalKey}
                   level={`body${index + 1}` as keyof TypographySystem}
                   color={index === 0 ? "success" : "neutral"}
                 >
-                  {bid.ts ? formatDistanceToNow(new Date(bid.ts)) + " ago" : '-'} - $
-                  {bid.value}
+                  ${bid.bidAmount} - {bid.timestamp ? formatDistanceToNow(new Date(bid.timestamp.seconds * 1000)) + " ago" : '-'}
                 </Typography>
               ))}
           </>

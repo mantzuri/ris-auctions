@@ -1,19 +1,22 @@
-import React from "react";
-import { Sheet, AspectRatio, ListItem, ListItemButton } from "@mui/joy";
+import {
+  AspectRatio,
+  ListItem,
+  ListItemButton,
+  Sheet,
+  Typography
+} from "@mui/joy";
 
-interface AuctionListItemType {
-  itemId: string;
-  image: any;
-  onClick: any;
-}
-const AuctionListItem = ({ itemId, image, onClick }: AuctionListItemType) => {
+import { AuctionListItemType } from "../types";
+
+const AuctionListItem = ({ itemId, image, onClick, title }: AuctionListItemType) => {
   return (
     <ListItem key={itemId}>
       <ListItemButton onClick={() => onClick(itemId)}>
-        <Sheet sx={{ width: 60 }}>
+        <Sheet sx={{ width: 80 }}>
           <AspectRatio>
             <img style={{ borderRadius: "md" }} src={image} alt="background" />
           </AspectRatio>
+          <Typography level="body4">{title}</Typography>
         </Sheet>
       </ListItemButton>
     </ListItem>
