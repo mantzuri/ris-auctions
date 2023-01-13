@@ -48,6 +48,14 @@ const db = getFirestore(app);
 
 const googleProvider = new GoogleAuthProvider();
 
+// check if user exists in db by email
+export const checkUserExists = async (email: string) => {
+  const q = query(collection(db, "users"), where("email", "==", email));
+  const docs = await getDocs(q);
+  return docs.docs.length > 0;
+};
+
+
 const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);

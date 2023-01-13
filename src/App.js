@@ -7,13 +7,14 @@ import { CssVarsProvider } from "@mui/joy/styles";
 import Login from "./screens/Login";
 import { auth } from "./utils/firebase";
 import background from "./assets/background.jpg";
+import theme from "./theme";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
 
   return (
-    <CssVarsProvider defaultMode="system">
+    <CssVarsProvider defaultMode="dark" theme={theme}>
       {!user && (
         <div className="bg">
           <img
