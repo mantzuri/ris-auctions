@@ -64,7 +64,7 @@ const Alert = ({
         color={currentState().color}
         endDecorator={
           <>
-            {onClose && <IconButton onClick={onClose} variant="soft" size="sm" color={currentState().color}>
+            {onClose !== undefined && <IconButton onClick={onClose} variant="soft" size="sm" color={currentState().color}>
               <CloseRoundedIcon />
             </IconButton>}
           </>

@@ -9,11 +9,12 @@ import {
 } from "@mui/joy";
 import { AuctionItemType, SelectedAuctionItemType } from "../types";
 import { DocumentData, QuerySnapshot } from "@firebase/firestore";
-import { auth, bidOnItem, streamAuctionBids } from "../firebase";
+import { auth, bidOnItem, streamAuctionBids } from "../utils/firebase";
 import { useEffect, useState } from "react";
 
 import Alert from "./Alert";
 import Clock from "./Clock";
+import DeleteListingDialog from "../screens/DeleteListingModal";
 import { formatDistanceToNow } from "date-fns";
 
 const REFRESH_INTERVAL = 60000;
@@ -22,7 +23,6 @@ const AuctionSelected = ({ image, title, subtitle, itemId }: SelectedAuctionItem
   const [bidAmount, setBidAmount] = useState<number | string>("");
   const [intervalKey, setIntervalKey] = useState(0);
   const [bids, setBids] = useState<AuctionItemType[]>([]);
-  const [bannerState, setBannerState] = useState(false);
 
   useEffect(() =>
     streamAuctionBids(
@@ -104,6 +104,8 @@ const AuctionSelected = ({ image, title, subtitle, itemId }: SelectedAuctionItem
               ))}
           </>
         </Sheet>
+        <DeleteListingDialog listingId={itemId} />
+
       </Box>
     </Box>
   );

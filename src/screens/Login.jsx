@@ -1,7 +1,8 @@
-import { CssVarsProvider } from "@mui/joy/styles";
+import { Card, Divider, Typography } from "@mui/joy";
+
 import Button from "@mui/joy/Button";
-import { signInWithGoogle } from "../firebase";
-import { Card, Typography, Divider } from "@mui/joy";
+import { CssVarsProvider } from "@mui/joy/styles";
+import { signInWithGoogle } from "../utils/firebase";
 
 export const Login = () => {
   return (

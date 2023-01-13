@@ -1,11 +1,11 @@
 import { Button, List, Sheet } from "@mui/joy";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
+import { logout, streamAuctionItems } from "../utils/firebase";
 
 import { AuctionItemType } from "../types";
 import AuctionListItem from "../components/AuctionListItem";
 import AuctionSelected from "../components/AuctionSelected";
 import NewAuctionModal from "./NewAuctionModal";
-import { streamAuctionItems } from "../firebase";
 import { useEffect } from "react";
 import { useState } from "react";
 
@@ -36,7 +36,7 @@ const Auction = () => {
 
   return (
     <Sheet>
-      <Button variant="plain" onClick={() => { }}>
+      <Button variant="plain" onClick={() => logout()}>
         Logout
       </Button>
       <NewAuctionModal open={modalOpen} onClose={setModalOpen} />

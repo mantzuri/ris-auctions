@@ -1,12 +1,13 @@
-import background from "./assets/background.jpg";
 import "./App.css";
 
+import { Alert, CircularProgress } from "@mui/joy";
+
+import Auction from "./screens/Auction";
 import { CssVarsProvider } from "@mui/joy/styles";
 import Login from "./screens/Login";
-import Auction from "./screens/Auction";
-import { Alert, CircularProgress } from "@mui/joy";
+import { auth } from "./utils/firebase";
+import background from "./assets/background.jpg";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "./firebase";
 
 function App() {
   const [user, loading, error] = useAuthState(auth);

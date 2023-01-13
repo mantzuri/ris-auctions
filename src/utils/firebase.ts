@@ -8,7 +8,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { BidType, NewAuctionItemType, UserType } from "./types";
+import { BidType, NewAuctionItemType, UserType } from "../types";
 import {
   DocumentData,
   QuerySnapshot,
@@ -16,6 +16,9 @@ import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
+  doc,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -25,6 +28,7 @@ import {
   where,
 } from "firebase/firestore";
 
+import { DEMO } from "./constants";
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -102,11 +106,11 @@ const logout = () => {
   signOut(auth);
 };
 
-const randomImage = () => `https://source.unsplash.com/random?sig=${Math.floor(Math.random() * 1000)}`;
+// const randomImage = () => `https://source.unsplash.com/random?sig=${Math.floor(Math.random() * 1000)}`;
 
-export const createAuctionItem = async ({ title, subtitle, imageURL = randomImage() }: NewAuctionItemType) => {
+export const createAuctionItem = async ({ title, subtitle, imageURL }: NewAuctionItemType) => {
   try {
-    const docRef = await addDoc(collection(db, "demo"), {
+    const docRef = await addDoc(collection(db, DEMO), {
       title,
       subtitle,
       imageURL,
@@ -118,24 +122,12 @@ export const createAuctionItem = async ({ title, subtitle, imageURL = randomImag
 };
 
 export const bidOnItem = async ({ itemId, bidAmount }: BidType) =>
-  await addDoc(collection(db, "demo-bids"), {
+  await addDoc(collection(db, `${DEMO}-bids`), {
     itemId,
     bidAmount,
     bidderId: auth.currentUser?.uid || "-",
     timestamp: Timestamp.now(),
   });
-
-export const getAuctionItemsOnce = async (items: string[] | undefined) => {
-  try {
-    const auctionItems: DocumentData[] = [];
-    const q = query(collection(db, "demo"));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(doc => auctionItems.push(doc.data()));
-    console.log(auctionItems);
-  } catch (error) {
-    return (error);
-  }
-};
 
 export const streamAuctionItems = (
   listId: string,
@@ -157,6 +149,29 @@ export const streamAuctionBids = (
   snapshots as SnapshotListenOptions,
   error
 );
+
+// firebase soft delete item
+export const deleteListing = async (itemId: string) => {
+  try {
+    // firebase get the document to be deleted
+    const docRef = doc(db, DEMO, itemId);
+    const docSnap = await getDoc(docRef);
+
+    await addDoc(collection(db, `${DEMO}-deleted`), {
+      itemId,
+      deletedBy: auth.currentUser?.uid || "-",
+      timestamp: Timestamp.now(),
+      ...docSnap.data()
+    });
+    await deleteDoc(doc(db, DEMO, itemId));
+  } catch
+  (error) {
+    console.error(error);
+  } finally {
+    console.log("deleted");
+  }
+};
+
 
 export {
   auth,

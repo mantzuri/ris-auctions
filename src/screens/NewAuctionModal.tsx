@@ -1,12 +1,16 @@
-import * as React from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 
 import Button from '@mui/joy/Button';
+import { FormControl } from '@mui/joy';
+import FormLabel from '@mui/joy/FormLabel';
+import Input from '@mui/joy/Input';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import TextField from '@mui/joy/TextField';
 import Typography from '@mui/joy/Typography';
-import { createAuctionItem } from '../firebase';
+import { createAuctionItem } from '../utils/firebase';
+import { uploadImage } from '../utils/storage';
 
 interface NewAuctionModalType {
   open?: boolean;
@@ -19,18 +23,31 @@ interface FormFieldsType extends HTMLTextAreaElement {
 
 export default function NewAuctionModal({ open, onClose }: NewAuctionModalType) {
 
-  const onFormSubmit = async (event: React.SyntheticEvent) => {
+  const [uploading, setUploading] = useState(false);
+
+  const onFormSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
+    setUploading(true);
     const field = event.currentTarget as FormFieldsType;
-    if (field && field[0] && field[1]) {
-      const response = await createAuctionItem({ title: field[0].value, subtitle: field[1].value })
-      console.log(response);
+    const imageField = field[2] as unknown as HTMLInputElement;
+    const imageInput = imageField.files && imageField.files[0];
+
+    if (field && field[0] && field[1] && field[2]) {
+      const imageRef = await uploadImage(imageInput);
+      await createAuctionItem({ title: field[0].value, subtitle: field[1].value, imageURL: imageRef });
     }
+    setUploading(false);
     onClose(false);
   };
 
+  useEffect(() => {
+    if (uploading) {
+      setTimeout(() => setUploading(false), 5000)
+    }
+  }, [uploading])
+
   return (
-    <React.Fragment>
+    <>
       <Button
         variant="plain"
         onClick={() => onClose(true)}
@@ -71,11 +88,15 @@ export default function NewAuctionModal({ open, onClose }: NewAuctionModalType) 
             <Stack spacing={2}>
               <TextField id="name" label="Name" autoFocus required />
               <TextField id="description" label="Description" required />
+              <FormControl>
+                <FormLabel required>Label</FormLabel>
+                <Input id="image" type="file" required />
+              </FormControl>
               <Button type="submit">Submit</Button>
             </Stack>
           </form>
         </ModalDialog>
       </Modal>
-    </React.Fragment>
+    </>
   );
 }
