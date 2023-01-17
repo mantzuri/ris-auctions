@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 
 import Alert from "./Alert";
 import Clock from "./Clock";
-import DeleteListingDialog from "../screens/DeleteListingModal";
+import DeleteListingDialog from "../modals/DeleteListingModal";
 import { formatDistanceToNow } from "date-fns";
 
 const REFRESH_INTERVAL = 60000;
