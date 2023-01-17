@@ -1,4 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
+import { checkUserIsAdmin, createAuctionItem } from '$utils/firebase';
 
 import Button from '@mui/joy/Button';
 import { FormControl } from '@mui/joy';
@@ -9,8 +10,8 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import TextField from '@mui/joy/TextField';
 import Typography from '@mui/joy/Typography';
-import { createAuctionItem } from '../utils/firebase';
-import { uploadImage } from '../utils/storage';
+import { uploadImage } from '$utils/storage';
+import useCheckIfUserAdmin from '$hooks/useCheckIfUserAdmin';
 
 interface NewAuctionModalType {
   open?: boolean;
@@ -24,6 +25,13 @@ interface FormFieldsType extends HTMLTextAreaElement {
 export default function NewAuctionModal({ open, onClose }: NewAuctionModalType) {
 
   const [uploading, setUploading] = useState(false);
+  const userIsAdmin = useCheckIfUserAdmin();
+
+  useEffect(() => {
+    if (uploading) {
+      setTimeout(() => setUploading(false), 5000)
+    }
+  }, [uploading]);
 
   const onFormSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
@@ -40,20 +48,16 @@ export default function NewAuctionModal({ open, onClose }: NewAuctionModalType) 
     onClose(false);
   };
 
-  useEffect(() => {
-    if (uploading) {
-      setTimeout(() => setUploading(false), 5000)
-    }
-  }, [uploading])
+
 
   return (
     <>
-      <Button
+      {userIsAdmin && <Button
         variant="plain"
         onClick={() => onClose(true)}
       >
         + Create auction item
-      </Button>
+      </Button>}
       <Modal open={Boolean(open)} onClose={() => onClose(false)}>
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"

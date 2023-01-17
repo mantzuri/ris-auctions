@@ -8,10 +8,13 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import { SyntheticEvent } from 'react';
 import Typography from '@mui/joy/Typography';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
-import { deleteListing } from '../utils/firebase';
+import { deleteListing } from '$utils/firebase';
+import useCheckIfUserAdmin from '$hooks/useCheckIfUserAdmin';
 
 export default function DeleteListingDialog({ listingId }: { listingId: string }) {
   const [open, setOpen] = React.useState(false);
+  const userIsAdmin = useCheckIfUserAdmin();
+
 
   const onDeleteClicked = (_event: SyntheticEvent) => {
     deleteListing(listingId)
@@ -20,13 +23,13 @@ export default function DeleteListingDialog({ listingId }: { listingId: string }
 
   return (
     <React.Fragment>
-      <Button
+      {userIsAdmin && <Button
         variant="plain"
         color="danger"
         onClick={() => setOpen(true)}
       >
         Discard
-      </Button>
+      </Button>}
       <Modal
         aria-labelledby="alert-dialog-modal-title"
         aria-describedby="alert-dialog-modal-description"

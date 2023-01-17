@@ -55,6 +55,13 @@ export const checkUserExists = async (email: string) => {
   return docs.docs.length > 0;
 };
 
+// CHeck if user is admin value in db
+export const checkUserIsAdmin = async () => {
+  const q = query(collection(db, "users"), where("email", "==", auth.currentUser?.email || ""));
+  const docs = await getDocs(q);
+  return docs.docs[0].data().admin;
+};
+
 
 const signInWithGoogle = async () => {
   try {
