@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "baseUrl": "./",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+    "sourceRoot": "src",
+    "sourceMap": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -19,9 +22,26 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": [
-    "src"
-  ]
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "$components/*": [
+        "src/components/*"
+      ],
+      "$screens/*": [
+        "src/screens/*"
+      ],
+      "$assets/*": [
+        "src/assets/*"
+      ],
+      "$utils/*": [
+        "src/utils/*"
+      ],
+      "$hooks/*": [
+        "src/hooks/*"
+      ],
+      "$modals/*": [
+        "src/modals/*"
+      ]
+    }
+  }
 }
