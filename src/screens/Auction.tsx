@@ -3,9 +3,9 @@ import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { logout, streamAuctionItems } from "../utils/firebase";
 
 import { AuctionItemType } from "../types";
-import AuctionListItem from "../components/AuctionListItem";
-import AuctionSelected from "../components/AuctionSelected";
-import NewAuctionModal from "./NewAuctionModal";
+import AuctionListItem from "$components/AuctionListItem";
+import AuctionSelected from "$components/AuctionSelected";
+import NewAuctionModal from "$modals/NewAuctionModal";
 import { useEffect } from "react";
 import { useState } from "react";
 

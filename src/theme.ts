@@ -1,4 +1,3 @@
-import { createTheme } from '@mui/system';
 import { extendTheme } from '@mui/joy/styles';
 
 const theme = extendTheme({

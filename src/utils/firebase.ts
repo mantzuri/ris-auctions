@@ -84,23 +84,27 @@ const logInWithEmailAndPassword = async ({ email, password }: UserType) => {
   }
 };
 
-const registerWithEmailAndPassword = async ({ name, email, password }: UserType) => {
+const registerWithEmailAndPassword = async ({ email, password }: UserType) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
     await addDoc(collection(db, "users"), {
       uid: user.uid,
-      name,
       authProvider: "local",
       email,
     });
   } catch (e) {
     const error = e as AuthError;
+    console.log(auth, email, password)
     alert(error.message);
   }
 };
 
 const sendPasswordReset = async (email: string) => {
+  if (!email) {
+    alert("Please enter your email address.");
+    return;
+  }
   try {
     await sendPasswordResetEmail(auth, email);
     alert("Password reset link sent!");
