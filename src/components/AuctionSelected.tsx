@@ -53,8 +53,8 @@ const AuctionSelected = ({ image, title, subtitle, itemId }: SelectedAuctionItem
   }, [intervalKey])
 
   return (
-    <Box sx={{ width: "100vw" }}>
-      <Box sx={{ width: 520, mx: "auto" }}>
+    <Box sx={{ width: "90vw", paddingX: "16px" }}>
+      <Box sx={{ width: 520, mx: "auto", maxWidth: "85vw" }}>
         <Typography level="h2" fontSize="md" sx={{ mb: 0.5 }}>
           {title}
         </Typography>

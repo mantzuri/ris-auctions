@@ -2,6 +2,9 @@
   text-align: center;
 }
 
+html {
+  background: black
+}
 /* .bg {
   position: fixed; 
   top: -50%; 
@@ -39,7 +42,6 @@
 .App-link {
   color: #61dafb;
 }
-0526
 
 @keyframes App-logo-spin {
   from {
